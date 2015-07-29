@@ -620,6 +620,12 @@ namespace Lua511
         {
             return KopiLua.Lua.luaL_loadbuffer(luaState, buff, (uint)size, name);
         }
+
+		public static int luaL_loadbuffer(KopiLua.Lua.lua_State luaState, byte[] buff, int size, string name)
+		{
+			return KopiLua.Lua.luaL_loadbuffer(luaState, buff, (uint)size, name);
+		}
+
 		//[DllImport(LUALIBDLL,CallingConvention=CallingConvention.Cdecl)]
         public static int luaL_loadfile(KopiLua.Lua.lua_State luaState, string filename)
         {

@@ -307,6 +307,42 @@ namespace LuaInterface
             return null;            // Never reached - keeps compiler happy
         }
 
+		public object[] DoString(byte[] chunk)
+		{
+			return DoString(chunk, "chunk");
+		}
+
+		/// <summary>
+		/// Executes a Lua chunk and returns all the chunk's return values in an array.
+		/// </summary>
+		/// <param name = "chunk">Chunk to execute</param>
+		/// <param name = "chunkName">Name to associate with the chunk. Defaults to "chunk".</param>
+		/// <returns></returns>
+		public object[] DoString (byte[] chunk, string chunkName)
+		{
+			int oldTop = LuaDLL.lua_gettop(luaState);
+			executing = true;
+			
+			if (LuaDLL.luaL_loadbuffer(luaState, chunk, chunk.Length, chunkName) == 0)
+			{
+				try
+				{
+					if (LuaDLL.lua_pcall(luaState, 0, -1, 0) == 0)
+						return translator.popValues(luaState, oldTop);
+					else
+						ThrowExceptionFromError(oldTop);
+				}
+				finally
+				{
+					executing = false;
+				}
+			}
+			else
+				ThrowExceptionFromError(oldTop);
+			
+			return null;			// Never reached - keeps compiler happy
+		}
+
         private int traceback(KopiLua.Lua.lua_State luaState)
         {
             LuaDLL.lua_getglobal(luaState,"debug");
